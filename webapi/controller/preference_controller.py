@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, redirect, Blueprint
-preference_bp = Blueprint('NVMail', __name__)
+preference_bp = Blueprint('NVPreference', __name__)
 
 @preference_bp.route('/addGroup',methods=['POST'])
 def AddPreference():
