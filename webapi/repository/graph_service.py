@@ -42,3 +42,10 @@ class GraphService:
             return response.json()
         else:
             raise Exception(f"Error fetching emails: {response.text}")
+        
+    def send_mail(self, email_message):
+        response = requests.post(self.api_url + 'sendMail', json=email_message, headers=self.headers)
+        if response.status_code == 202:
+            return {"message": "Email sent successfully"}
+        else:
+            raise Exception(f"Error sending email: {response.text}")
