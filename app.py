@@ -7,11 +7,13 @@ from webapi.service.socketio import socketio
 from webapi.controller.mail_controller import auth_bp
 from webapi.controller.websocket_controller import socket_bp
 from webapi.controller.preference_controller import preference_bp
+from webapi.repository.db import db
 
 
 load_dotenv()
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def helloWorld():
@@ -28,14 +30,15 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DBConnectionString")
 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 socketio.init_app(app)
 
  
 if __name__ == "__main__":
-    socketio.run(app, host='0.0.0.0', port=5001, debug=True, keyfile='key.pem', certfile='cert.pem')
+    socketio.run(app, host='0.0.0.0', port=5001, debug=True)
 
-    #  app.run(debug=True, ssl_context=('cert.pem', 'key.pem'))
+    #  app.run(debug=True, ssl_context=('cert.pem', 'key.pem')), keyfile='key.pem', certfile='cert.pem'
 
 
