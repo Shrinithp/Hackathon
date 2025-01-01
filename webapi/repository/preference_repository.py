@@ -37,7 +37,7 @@ class GroupService:
         ).all()
 
             if user_groups:
-                return {"user_id": user_id, "groups": [{"group_name": group.group_name,"description": group.description  }for group in user_groups]}
+                return {"user_id": user_id, "groups": [{"id": group.group_id,"group_name": group.group_name,"description": group.description  }for group in user_groups]}
             else:
                 return {"message": "User is not mapped to any default groups."}
         except Exception as e:
