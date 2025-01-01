@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 
-def create_subscription(access_token):
+def create_subscription(access_token,user_id):
     url = "https://graph.microsoft.com/v1.0/subscriptions"
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -14,7 +14,7 @@ def create_subscription(access_token):
     data = {
         "changeType": "created,updated",  # Correct change type
         "notificationUrl": "https://hackathon-nvmail.onrender.com/NVSocket/webhook",  # Your webhook URL
-        "resource": "me/messages",  # Correct resource
+        "resource": "users/" + user_id + "/messages",  # Correct resource
         "expirationDateTime": expiration_time,  # Ensure expiration time is properly formatted
         "clientState": "secretClientValue"  # Custom client state for validation
     }
