@@ -4,7 +4,7 @@ import requests
 from webapi.repository.model import Email_model
 
 
-class MailService:
+class MailBL:
     def getloginUrl():
         graph_service = GraphService(access_token=None)
         return graph_service.getloginUrl()

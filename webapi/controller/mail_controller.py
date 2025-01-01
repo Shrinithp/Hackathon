@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request, redirect, Blueprint
 import requests
-from webapi.businessLogic.mail_BL import MailService
+from webapi.businessLogic.mail_BL import MailBL
 from webapi.repository.model import Email_model
 
 auth_bp = Blueprint('NVMail', __name__)
 @auth_bp.route('/login',methods=['GET'])
 def login():
-    auth_url = MailService.getloginUrl()
+    auth_url = MailBL.getloginUrl()
     return jsonify({"auth_url": auth_url})
 
 @auth_bp.route('/getMail', methods=['GET'])
@@ -16,7 +16,7 @@ def get_mail():
         if not access_token:
             return jsonify({"error": "Access token not provided"}), 400
 
-        response = MailService.get_mail(access_token)
+        response = MailBL.get_mail(access_token)
         return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -30,7 +30,7 @@ def send_mail():
         email_model = Email_model.EmailModel.from_dict(data)
 
         # Pass the email model to the MailService
-        response = MailService.send_mail(access_token,email_model)
+        response = MailBL.send_mail(access_token,email_model)
         return jsonify(response), 200
 
     except Exception as e:

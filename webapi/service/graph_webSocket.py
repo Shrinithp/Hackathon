@@ -13,7 +13,7 @@ def create_subscription(access_token):
 
     data = {
         "changeType": "created,updated",  # Correct change type
-        "notificationUrl": "https://0.0.0.0:5001/NVSocket/webhook",  # Your webhook URL
+        "notificationUrl": "https://hackathon-nvmail.onrender.com/NVSocket/webhook",  # Your webhook URL
         "resource": "me/messages",  # Correct resource
         "expirationDateTime": expiration_time,  # Ensure expiration time is properly formatted
         "clientState": "secretClientValue"  # Custom client state for validation
