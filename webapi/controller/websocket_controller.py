@@ -21,14 +21,15 @@ def handle_disconnect():
 # Webhook route to handle notifications from Graph API
 @socket_bp.route('/webhook', methods=['POST'])
 def handle_webhook():
-    data = request.json
-    if data:
-        # Process and emit the Graph API notification
-        print("New notification from Graph API:", data)
-        socketio.emit('new_mails', {'mails': data})
-        return '', 200
-    else:
-        return '', 200
+    try:
+        data = request.json
+        if data:
+            # Process and emit the Graph API notification
+            print("New notification from Graph API:", data)
+            socketio.emit('new_mails', {'mails': data})
+            return '', 200
+    except Exception as e:
+        return '', 200    
 
 # Create a subscription for the user after login
 @socket_bp.route('/createSubscription', methods=['POST'])
