@@ -1,9 +1,9 @@
-from webapi.repository.model.dim_group import DimGroup
-from webapi.repository.model.user_group import UserGroupMap
+from webapi.repository.tables.dim_group import DimGroup
+from webapi.repository.tables.user_group import UserGroupMap
 from webapi.repository.db import db
 from sqlalchemy import or_
 
-class GroupService:
+class PreferenceService:
     def add_group(self, group_name,group_description, user_id):
         try:
             # Create a new group and set isDefault to False

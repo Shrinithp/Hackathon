@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, redirect, Blueprint
-from webapi.businessLogic.preference_BL import GroupBL
+from webapi.businessLogic.preference_BL import PreferenceBL
 from webapi.validator.token_validator import TokenValidator
 
 preference_bp = Blueprint('NVPreference', __name__)
@@ -25,7 +25,7 @@ def add_group():
     if not group_name:
         return jsonify({"error": "Group name is required"}), 400
 
-    result = GroupBL.addGroup(group_name,group_description, user_id)
+    result = PreferenceBL.addGroup(group_name,group_description, user_id)
     return jsonify(result)
 
 @preference_bp.route('/get_groups', methods=['GET'])
@@ -41,7 +41,7 @@ def get_groups():
     if not user_info:
         return jsonify({"error": "Invalid or expired access token"}), 401
 
-    result = GroupBL.get_groups(user_id)
+    result = PreferenceBL.get_groups(user_id)
     return jsonify(result)
 
 @preference_bp.route('/delete_group/<int:group_id>', methods=['DELETE'])
@@ -57,7 +57,7 @@ def delete_group(group_id):
     if not user_info:
         return jsonify({"error": "Invalid or expired access token"}), 401
 
-    result = GroupBL.delete_group(user_id, group_id)
+    result = PreferenceBL.delete_group(user_id, group_id)
     return jsonify(result)
 
 @preference_bp.route('/edit_group', methods=['PUT'])
@@ -78,5 +78,5 @@ def edit_group():
     group_name = data.get('group_name')
     group_description = data.get('description')
 
-    result = GroupBL.edit_group(user_id, group_id, group_name, group_description)
+    result = PreferenceBL.edit_group(user_id, group_id, group_name, group_description)
     return jsonify(result)

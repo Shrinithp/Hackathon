@@ -1,7 +1,7 @@
 from webapi.repository.graph_service import GraphService
 from flask import Flask, jsonify, request, redirect
 import requests
-from webapi.repository.model import Email_model
+from webapi.repository.custom_group_repository import GroupService
 
 
 class MailBL:
@@ -11,7 +11,9 @@ class MailBL:
 
     def get_mail(access_token):
         graph_service = GraphService(access_token)
-        return graph_service.get_mail()
+        email_data = graph_service.get_mail()
+        # GroupService.store_email_data(email_data)
+        return email_data
     
     def send_mail(access_token,email_model):
         try:
