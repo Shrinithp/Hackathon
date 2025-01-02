@@ -8,6 +8,7 @@ from webapi.service.socketio import socketio
 from webapi.controller.mail_controller import auth_bp
 from webapi.controller.websocket_controller import socket_bp
 from webapi.controller.preference_controller import preference_bp
+from webapi.controller.custom_group_controller import custom_group_bp
 from webapi.repository.db import db
 
 load_dotenv()
@@ -24,6 +25,7 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 app.register_blueprint(auth_bp, url_prefix='/NVMail')
 app.register_blueprint(socket_bp, url_prefix='/NVSocket')
 app.register_blueprint(preference_bp, url_prefix='/NVPreference')
+app.register_blueprint(custom_group_bp, url_prefix='/NVGroup')
 
 # PostgreSQL connection URI (without sslmode)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DBConnectionString")
