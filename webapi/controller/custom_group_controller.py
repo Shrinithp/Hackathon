@@ -42,3 +42,41 @@ def sync_mail():
     response = MailBL.get_mail(access_token)
     GroupBL.sync_mail(user_id, response)
     return jsonify({"success": True})
+
+@custom_group_bp.route('/getMailResponse', methods=['POST'])
+def get_mail_response():
+    access_token = request.authorization.token
+    if not access_token:
+        return jsonify({"error": "Access token is missing or invalid"}), 401
+    user_info = TokenValidator.validate_access_token(access_token)
+
+    if not user_info:
+        return jsonify({"error": "Access token is missing or invalid"}), 401
+
+    user_id = user_info.get("id")
+
+    if not user_info:
+        return jsonify({"error": "Invalid or expired access token"}), 401
+    
+    data = request.get_json()
+    mail_body = data.get('mail_body')
+    return jsonify({"response":  GroupBL.get_mail_response(mail_body)}),200
+
+@custom_group_bp.route('/getMailSummary', methods=['POST'])
+def get_mail_summary():
+    access_token = request.authorization.token
+    if not access_token:
+        return jsonify({"error": "Access token is missing or invalid"}), 401
+    user_info = TokenValidator.validate_access_token(access_token)
+
+    if not user_info:
+        return jsonify({"error": "Access token is missing or invalid"}), 401
+
+    user_id = user_info.get("id")
+
+    if not user_info:
+        return jsonify({"error": "Invalid or expired access token"}), 401
+    
+    data = request.get_json()
+    mail_body = data.get('mail_body')
+    return jsonify({"summary":  GroupBL.get_email_summary(mail_body)}),200

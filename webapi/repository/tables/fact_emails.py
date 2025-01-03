@@ -20,3 +20,18 @@ class FactEmails(db.Model):
 
     def __repr__(self):
         return f'<FactEmails {self.id} - {self.subject}>'
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "subject": self.subject,
+            "body": self.body,
+            "description": self.description,
+            "received_time": self.received_time.isoformat() if self.received_time else None,
+            "sender": self.sender,
+            "is_deleted": self.is_deleted,
+            "is_read": self.is_read,
+            "status": self.status,
+            "userid": self.userid,
+            "group_id": self.group_id
+        }
