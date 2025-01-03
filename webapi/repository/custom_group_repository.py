@@ -7,17 +7,21 @@ from flask import jsonify
 class GroupService:
     def get_group_email(self, user_id, group_id):
         try:
-            email_entries = [FactEmails]
-            if group_id =='all':
+            # Validate and handle group_id
+            if group_id == 'all':
                 email_entries = db.session.query(FactEmails).filter(
                     FactEmails.userid == user_id,
                     FactEmails.is_deleted == False
                 ).all()
             else:
-                # Fetch emails based on the user_id and group_id
+                try:
+                    group_id = int(group_id)
+                except ValueError:
+                    return jsonify({"error": "Invalid group_id"}), 400  # Bad Request
+
                 email_entries = db.session.query(FactEmails).filter(
-                    FactEmails.userid == user_id, 
-                    FactEmails.group_id == int(group_id),
+                    FactEmails.userid == user_id,
+                    FactEmails.group_id == group_id,
                     FactEmails.is_deleted == False
                 ).all()
 
@@ -25,43 +29,54 @@ class GroupService:
                 return jsonify([])  # Return an empty list if no emails are found
 
             email_models = []
+
             for email_entry in email_entries:
-                # Query to get the recipients associated with the email
+                # Fetch recipients for the current email entry
                 recipients = db.session.query(Recipients).filter(
                     Recipients.email_id == email_entry.id
                 ).all()
 
-                # Prepare the data for Message and EmailModel
-                to_recipients = []
-                cc_recipients = []
-                for recipient in recipients:
-                    email_address = {"address": recipient.email_address}
-                    if recipient.recipient_type == 'TO':
-                        to_recipients.append({"emailAddress": email_address})
-                    elif recipient.recipient_type == 'CC':
-                        cc_recipients.append({"emailAddress": email_address})
+                # Prepare recipient lists
+                to_recipients = [
+                    {"emailAddress": {"address": recipient.email_address}}
+                    for recipient in recipients if recipient.recipient_type == 'TO'
+                ]
+                cc_recipients = [
+                    {"emailAddress": {"address": recipient.email_address}}
+                    for recipient in recipients if recipient.recipient_type == 'CC'
+                ]
 
-                # Prepare the email body
+                # Prepare email data with sender and sentDateTime
                 email_data = {
                     "subject": email_entry.subject,
                     "body": {
-                        "contentType": "Text",  # Default or set based on the content type you want
-                        "content": email_entry.description or "",  # You may fetch description or body content if it's stored differently
+                        "contentType": "Text",
+                        "content": email_entry.description or "",
                     },
                     "toRecipients": to_recipients,
                     "ccRecipients": cc_recipients,
-                    "attachments": []  # Add attachments if needed
+                    "attachments": [],  # Add attachments logic if needed
+                    "sender": {
+                        "emailAddress": {
+                            "address": email_entry.sender  # Use sender from FactEmails
+                        }
+                    },
+                    "sentDateTime": email_entry.received_time.isoformat() if email_entry.received_time else None,  # Use received_time as sentDateTime
                 }
 
-                # Create EmailModel instance for each email
+                # Create EmailModel instance and add it to the list
                 email_model = EmailModel(message=email_data)
-                email_models.append(email_model.to_dict())  # Use to_dict to convert to dictionary
+                email_models.append(email_model.to_dict())
 
             # Return the list of emails as a JSON response
             return jsonify(email_models)
 
+        except ValueError as ve:
+            return jsonify({"error": f"Value error: {str(ve)}"}), 400  # Handle bad input
         except Exception as e:
-            return jsonify({"error": str(e)}), 500  # Return error message if something goes wrong
+            # Log the exception (e.g., using a logging framework)
+            return jsonify({"error": "An unexpected error occurred"}), 500
+
         
     def sync_mail(self, user_id, email_data):
         try:

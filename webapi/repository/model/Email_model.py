@@ -23,12 +23,14 @@ class Attachment:
 
 
 class Message:
-    def __init__(self, subject, body, toRecipients, ccRecipients=None, attachments=None):
+    def __init__(self, subject, body, toRecipients, ccRecipients=None, attachments=None, sender=None, sentDateTime=None):
         self.subject = subject
         self.body = Body(**body)
         self.toRecipients = [Recipient(**recipient) for recipient in toRecipients]
         self.ccRecipients = [Recipient(**recipient) for recipient in ccRecipients] if ccRecipients else []
         self.attachments = [Attachment(**attachment) for attachment in attachments] if attachments else []
+        self.sender = Recipient(**sender) if sender else None
+        self.sentDateTime = sentDateTime
 
 
 class EmailModel:
@@ -70,6 +72,12 @@ class EmailModel:
                     }
                     for attachment in self.message.attachments
                 ],
+                "sender": {
+                    "emailAddress": {
+                        "address": self.message.sender.emailAddress.address
+                    }
+                } if self.message.sender else None,
+                "sentDateTime": self.message.sentDateTime,
             },
             "saveToSentItems": self.saveToSentItems,
         }
