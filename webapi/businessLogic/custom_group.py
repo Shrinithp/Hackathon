@@ -2,11 +2,12 @@
  
 import os
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 from langchain.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
+load_dotenv()
  
-class UserCustomGrouping:
-    key = "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"
+class UserCustomGrouping:   
     persist_directory = "new_group_directory"
     collection_name = "new_group_collection"
  
@@ -16,14 +17,14 @@ class UserCustomGrouping:
         self.ids = [str(item["id"]) for item in email_data] 
         self.metadatas = [{"source": "mail", "id": str(item["id"])} for item in email_data]
  
-        self.embeddings = OpenAIEmbeddings(openai_api_key=self.key)
+        self.embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
         self.new_group_vectorstore = self._initialize_vectorstore()
  
         # Add texts to vector store
         self.new_group_vectorstore.add_texts(self.documents, self.metadatas, self.ids)
  
-        if "OPENAI_API_KEY" not in os.environ:
-            os.environ["OPENAI_API_KEY"] = self.key
+        # if "OPENAI_API_KEY" not in os.environ:
+        #     os.environ["OPENAI_API_KEY"] = self.key
     @staticmethod
     def clean_html(html_text):
         """
